@@ -43,7 +43,25 @@ cp -r
 $FOAM_TUTORIALS/combustion/reactingFoam/laminar/counterFlowFlame2D
 $WM_PROJECT_USER_DIR/run
 \end{lstlisting}
-The directiory where counterFlowFlame2D tutorial was changed in the newer version of OpenFOAM, hence the change from \textit{ras} to \textit{laminar}.
 
+The directiory where counterFlowFlame2D tutorial was changed in the newer version of OpenFOAM, hence the change from \textit{ras} to \textit{laminar}. Then, the chemkin directory must be created in counterFlowFlame2D
+\begin{lstlisting}
+cd $WM_PROJECT_USER_DIR/run/counterFlowFlame2D
+mkdir chemkin
+\end{lstlisting}
+
+Now the appropriate case files have to be edited in order to use chemkin files. Following changes to the constant/thermophysicalProperties file need to be made:
+\begin{lstlisting}
+chemistryReader foamChemistryReader;
+foamChemistryFile "$FOAM_CASE/constant/reactions";
+foamChemistryThermoFiler "$FOAM_CASE/constant/thermo.compressible:'
+\end{lstlisting}
+to:
+\begin{lstlisting}
+chemistryReader chemkinReader;
+CHEMKINFile "$FOAM_CASE/chemkin/drm19.dat";
+CHEMKINThermoFile "$FOAM_CASE/chemkin/thermo30.dat";
+\end{lstlisting}
+NOTE: SOME CHANGES TO CHEMKIN FILES MIGHT BE NECESSARY [TO BE CHECKED]
 
 \end{document}
