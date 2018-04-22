@@ -8,6 +8,7 @@
 \usepackage{multirow}
 \usepackage{amstext}
 \usepackage{graphicx}
+\usepackage{listings} % enables source code to be pasted
 
 \makeatletter
 \makeatother
@@ -32,6 +33,17 @@
 
 \section{Introduction}
 
-The goal of this paper is to reproduce tutorial case\footnote{Daniel Moëll, Siemens Industrial Turbomachinery AB/Fluid Mechanics Lund University, 2015-12-08, url: http://www.tfd.chalmers.se/~hani/kurser/OS_CFD_2015/DanielMoell/Presentation_ISAT-CK7.pdf, Accessed: 06.04.2018}, which was prepared by Daniel Moëll for the course "CFD with OpenSource Software". 
+The goal of this paper is to reproduce tutorial case\footnote{Daniel Moëll, Siemens Industrial Turbomachinery AB/Fluid Mechanics Lund University, 2015-12-08, url: http://www.tfd.chalmers.se/\~{}hani/kurser/OS\_CFD\_2015/DanielMoell/Presentation\_ISAT-CK7.pdf, Accessed: 06.04.2018}, which was prepared by Daniel Moëll for the course "CFD with OpenSource Software". 
+
+\section{Preparing tutorial case}
+
+The first step of this paper is to create an adjusted tutorial case. The first step is to copy the already present tutorial case from the OpenFOAM directory. As the OpenFOAM v1712 is used in this paper, there are some differences compared to the aforementioned work. In order to copy the tutorial case, following command has to be executed while being in OpenFOAM bash:
+\begin{lstlisting}
+cp -r 
+$FOAM_TUTORIALS/combustion/reactingFoam/laminar/counterFlowFlame2D
+$WM_PROJECT_USER_DIR/run
+\end{lstlisting}
+The directiory where counterFlowFlame2D tutorial was changed in the newer version of OpenFOAM, hence the change from \textit{ras} to \textit{laminar}.
+
 
 \end{document}
