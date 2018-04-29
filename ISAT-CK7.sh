@@ -52,6 +52,11 @@ echo making backup of files to be changed
 # cp $caseDir/constant/thermophysicalProperties $caseDir/constant/~thermophysicalProperties
 # rm $caseDir/constant/thermophysicalProperties
 mv $caseDir/constant/thermophysicalProperties $caseDir/constant/~thermophysicalProperties
+mv $caseDir/0/U $caseDir/0/~U
+mv $caseDir/0/T $caseDir/0/~T
+mv $caseDir/0/CH4 $caseDir/0/~CH4
+mv $caseDir/0/O2 $caseDir/0/~O2
+mv $caseDir/0/N2 $caseDir/0/~N2
 
 # solution with shell editing would be probably faster,
 # but for the sake of learning Python was chosen.
@@ -63,3 +68,9 @@ echo editing constant/thermophysicalProperties
 # to launch python script in appropriate location cd command is used
 cd $caseDir/constant/
 python $scriptsDirectory/thermophysicalProperties.py
+
+# script for adjusting boundary condition
+echo editing boundary conditions
+cd $caseDir/0/
+python $scriptsDirectory/boundaryConditions.py 
+

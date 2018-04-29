@@ -64,4 +64,6 @@ CHEMKINThermoFile "$FOAM_CASE/chemkin/thermo30.dat";
 \end{lstlisting}
 NOTE: SOME CHANGES TO CHEMKIN FILES MIGHT BE NECESSARY [TO BE CHECKED]
 
+As the aforementioned tutorial aims to simulate premixed flame, some changes to boundary conditions wll be made. Afterwards, the case will simulate counterflow of two premixed fuel-air mixtures with the temperature of 305$K$ with the velocity equal to 0.8$m/s$. The ignition will be implemented as the high temperature zone in the middle of the domain by the use of setFields command, so the appropriate setFieldsDict file must be created.
+
 \end{document}
