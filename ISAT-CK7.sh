@@ -74,3 +74,14 @@ echo editing boundary conditions
 cd $caseDir/0/
 python $scriptsDirectory/boundaryConditions.py 
 
+# script for creating setFieldsDict file
+# cd $caseDir/system/
+# python $scriptsDirectory/setFieldsDict.py
+# copying setFieldsDict
+cp $scriptsDirectory/setFieldsDict $caseDir/system/setFieldsDict
+
+# running tutorial case
+cd $caseDir/
+blockMesh
+setFields
+reactingFoam
