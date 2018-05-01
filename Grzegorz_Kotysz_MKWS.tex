@@ -54,19 +54,37 @@ Now the appropriate case files have to be edited in order to use chemkin files. 
 \begin{lstlisting}
 chemistryReader foamChemistryReader;
 foamChemistryFile "$FOAM_CASE/constant/reactions";
-foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressible:'
+foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressible";
 \end{lstlisting}
 to:
 \begin{lstlisting}
 chemistryReader chemkinReader;
 CHEMKINFile "$FOAM_CASE/chemkin/drm19.dat";
-CHEMKINTransportFile "$FOAM_CASE/chemkin/thermo30.dat";
+CHEMKINThermoFile "$FOAM_CASE/chemkin/thermo30.dat";
 \end{lstlisting}
-NOTE: In tutorial author states "CHEMKINThermoFile", but in newer versions of OF, "CHEMKINTransportFile" keyword must be used.
-Unfortunately the default CHEMKIN file is not read correctly by OF reader. Hence, it must be changed.
-SOME CHANGES TO CHEMKIN FILES MIGHT BE NECESSARY [TO BE CHECKED]
-MAYBE TRY chemkinToFoam
+It seems now transport properties are not hard-coded anymore in chemkinReader, hence, transport file must be prepared.\footnote{https://bugs.openfoam.org/view.php?id=1888} However, it seem now it is impossible to use chemkinReader.\footnote{https://bugs.openfoam.org/view.php?id=2582} Hence, chemkinToFoam will be used to translate chemkin files to foam files by running command, where foamChemistry and foamThermo are names of the reactions and thermodynamics properties files.
+\begin{lstlisting}
+cd $caseDir/chemkin
+chemkinToFoam drm19.dat thermo30.dat transport.dat foamChemistry foamThermo
+\end{lstlisting}
+Now, the constant/thermophysicalProperties must be changed to read files from chemkin directory.
+\begin{lstlisting}
+foamChemistryFile "$FOAM_CASE/chemkin/foamChemistry";
+foamChemistryThermoFile "$FOAM_CASE/chemkin/foamThermo";
+\end{lstlisting}
+Unfortunately, chemkinToFoam requires files in CHEMKIN 3 format\footnote{https://www.openfoam.com/documentation/user-guide/standard-utilities.php#dx33-136284} and these files are now inaccessible, so the reaction and thermodynamics data will be taken from tutorials in OpenFOAM installation.
+The constant/thermophysicalProperties must be changed to read files from chemkin directory.
+\begin{lstlisting}
+foamChemistryFile "$FOAM_CASE/constant/reactionsGRI";
+foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGasGRI";
+\end{lstlisting}
 
 As the aforementioned tutorial aims to simulate premixed flame, some changes to boundary conditions wll be made. Afterwards, the case will simulate counterflow of two premixed fuel-air mixtures with the temperature of 305$K$ with the velocity equal to 0.8$m/s$. The ignition will be implemented as the high temperature zone in the middle of the domain by the use of setFields command, so the appropriate setFieldsDict file must be created.
-
+In the end one can run the case via following set of commands:
+\begin{lstlisting}
+cd $caseDir/
+blockMesh
+setFields
+reactingFoam
+\end{lstlisting}
 \end{document}
