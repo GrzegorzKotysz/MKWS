@@ -1,7 +1,7 @@
 # file to change boundary conditions
+# BC should be sorted out. They should be written from scratch by functions (objects) instead of editing already existing files.
 # OpenFOAM uses 80 char lines, so this script should be appropriately changed. Now it is not elegant. Some indents are not correctly written. Maybe writing text into 80 char strings is a better idea. It will be tested for CH4, O2 and N2 BC.
 # changing velocity
-
 f_old = open("~U", 'r')
 f_new = open("U", 'w')
 # vector class:
@@ -36,6 +36,7 @@ Ufuel = vector(0.8, 0., 0.)
 
 for line in f_old:
     if "fuel" in line :
+        f_new.write(4*' ' + "fuel\n")
         for line in f_old :
             if strContainsVector(line) :
                 f_new.write(8*' '+"value"+12*' '+"uniform %s;\n" % Ufuel.returnVec())
@@ -43,6 +44,7 @@ for line in f_old:
             else :
                 f_new.write(line)
     elif "air" in line :
+        f_new.write(4*' ' + "air\n")
         for line in f_old :
             if strContainsVector(line) :
                 f_new.write(8*' '+"value"+12*' '+"uniform %s;\n" % Uair.returnVec())
