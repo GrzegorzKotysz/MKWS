@@ -7,6 +7,19 @@
 # if scripts directory will be needed for copying python scripts etc
 scriptsDirectory="$PWD"
 
+# check whether user wants to prepare ISAT library or run the tutorial case
+while :
+do
+    printf "Choose appropriate option\n"
+    printf "To install ISAT library: ISAT\n"
+    printf "To create tutorial case: tutorial\n"
+    read whichOption
+    if [[ $whichOption == "ISAT" || $whichOption == "tutorial" ]] ; then
+        break
+    fi
+done
+
+if [[ $whichOption == "tutorial" ]]; then
 #check whether folder already exists and delete it, if so
 if [ -d "$WM_PROJECT_USER_DIR/run/counterFlowFlame2D" ]; then
   rm -r "$WM_PROJECT_USER_DIR/run/counterFlowFlame2D"
@@ -22,7 +35,7 @@ while :
 do
 echo 0 - use CHEMKIN 3 files\; 1 - use tutorial files
 read whichChemistry
-if [ $whichChemistry == 0 ]
+if [[ $whichChemistry == 0 ]]
 then
     while :
     do
@@ -61,7 +74,7 @@ then
     break
     done
 fi
-if [ $whichChemistry == 1 ]
+if [[ $whichChemistry == 1 ]]
 then
     cp $WM_PROJECT_DIR/tutorials/combustion/reactingFoam/laminar/counterFlowFlame2D_GRI/constant/reactionsGRI $caseDir/constant/
     cp $WM_PROJECT_DIR/tutorials/combustion/reactingFoam/laminar/counterFlowFlame2D_GRI/constant/thermo.compressibleGasGRI $caseDir/constant/
@@ -110,3 +123,32 @@ cd $caseDir/
 blockMesh
 setFields
 reactingFoam
+
+fi
+
+if [[ $whichOption == "ISAT" ]]; then
+while :
+do
+    printf "Do you want to automatically install prerequisites? [Y/n]\n"
+    read choice
+    if [[ $choice == "Y" || $choice == "n" ]]
+    then
+        break
+fi
+done 
+if [[ $choice == "Y" ]]
+then
+    sudo apt install g++ python scons libboost-all-dev libsundials-serial-dev cython python-dev python-numpy python-numpy-dev
+fi
+
+printf "Provide cantera directory\n"
+read canteraDir
+cd $canteraDir/
+printf "Editing SConstruct file\n"
+mv SConstruct ~SConstruct
+python $scriptsDirectory/ISAT-CK7.py
+
+printf "Compiling Cantera...\n"
+scons build
+scons install
+fi
