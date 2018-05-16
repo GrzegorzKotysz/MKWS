@@ -87,4 +87,38 @@ blockMesh
 setFields
 reactingFoam
 \end{lstlisting}
+
+\section{Compiling ISAT-CK7}
+In order to use ISAT-CK7 code, both Cantera and the code itself must be compiled. There are following prerequisites:
+\begin{itemize}
+\item g++
+\item python
+\item scons
+\item libboost-all-dev
+\item libsundials-serial-dev
+\item cython
+\item python-dev
+\item python-numpy
+\item python-numpy-dev
+\end{itemize}
+It is necessary to adjust Cantera build options for both codes to work properly. First of all, Cantera must be downloaded\footnote{url: https://sourceforge.net/projects/cantera/}. In this work Cantera 2.3.0 is used. As the aforementioned tutorial was written for Cantera 2.2.0, some changes had to be introduced. Namely, the -fPIC (Position Independent Code) flags must be added to certain functions.(ARE THEY REALLY FUNCTIONS? INQUIRE) Tutorial author presents line numbers, however, in this paper function names are also included, as the line numbers change between Cantera versions.
+\begin{lstlisting}
+L241 defaults.ccFlags = ' ' -> defaults.ccFlags = '-fPIC'
+L409-411 ('FORTRANFLAGS', ..., '-03'), -> ('FORTRANFLAGS', ..., '-fPIC -03'),
+\end{lstlisting}
+In the original tutorial the 'F77FLAG' must also be changed, but it is not present in Cantera 2.3.0. The next step is to compile Cantera.
+\begin{lstlisting}
+scons build
+scons install
+\end{lstlisting}
+Unfortunately, the following error was encountered:
+\begin{lstlisting}
+Checking for C++ header file fmt/ostream.h... no
+INFO: Using private installation of fmt library.
+ERROR: fmt is missing. Install source in ext/fmt.
+\end{lstlisting}
+Now, the ISAT-CK7 cantera fortran code must be downloaded.
+	
+
+
 \end{document}
