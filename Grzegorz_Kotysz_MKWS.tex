@@ -89,7 +89,7 @@ reactingFoam
 \end{lstlisting}
 
 \section{Compiling ISAT-CK7}
-In order to use ISAT-CK7 code, both Cantera and the code itself must be compiled. There are following prerequisites:
+In order to use ISAT-CK7 code, both Cantera and the code itself must be compiled. Scons is only available for Python 2,\footnote{http://cantera.org/docs/sphinx/html/compiling/installation-reqs.html} hence it will be used. There are following prerequisites:
 \begin{itemize}
 \item g++
 \item python
@@ -117,6 +117,24 @@ Checking for C++ header file fmt/ostream.h... no
 INFO: Using private installation of fmt library.
 ERROR: fmt is missing. Install source in ext/fmt.
 \end{lstlisting}
+Hence, the fmt package must be downloaded,
+version 5.0.0\footnote{http://fmtlib.net/5.0.0/} (((version 3.0.0 was used as the newer versions are not compatible with Cantera.\footnote{http://fmtlib.net/3.0.0/}))) It must be unpacked and installed by executing following commands:
+\begin{lstlisting}
+cd <fmt folder>
+mkdir build
+cd build
+cmake ..
+make 
+sudo make install
+\end{lstlisting}
+Next, the same situation happened for gtest\footnote{https://github.com/google/googletest} and Eigen\footnote{https://eigen.tuxfamily.org/index.php?title=Main_Page} libraries. {{{Note: all three packages can be also installed into <cantera folder>/ext folder and Scons will resolve the issue}}}. After finishing all the above steps, the following error was discovered while running scons build:
+\begin{lstlisting}
+from src/fortran/fct.cpp:14: include/cantera/base/fmt.h:5:26: fatal error: fmt/format.h: No such file or directory
+compilation terminated.
+\end{lstlisting}
+	
+
+
 Now, the ISAT-CK7 cantera fortran code must be downloaded.
 	
 

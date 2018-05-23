@@ -136,10 +136,31 @@ do
         break
 fi
 done 
+while :
+do
+printf "Do you want to use Anaconda? [Y/n]\n"
+read useAnaconda
+if [[ $useAnaconda == "Y" || $useAnaconda == "n" ]]; then
+    break
+fi
+done
 if [[ $choice == "Y" ]]
 then
-    sudo apt install g++ python scons libboost-all-dev libsundials-serial-dev cython python-dev python-numpy python-numpy-dev
+    if [[ $useAnaconda == "Y" ]]; then
+        printf "Provide name of Anaconda environment\n"
+        read condaEnv
+        source activate $condaEnv
+        sudo apt install g++ libboost-all-dev python-numpy-dev python-dev libsundials-serial-dev python-numpy python-setuptools
+        conda install python scons cython #some errors, to be solved later
+    else
+        sudo apt install g++ python scons libboost-all-dev libsundials-serial-dev cython python-dev python-numpy python-numpy-dev
+    fi
+elif [[ $useAnaconda == "Y" ]]; then
+    printf "Provide name of Anaconda environment\n"
+    read condaEnv
+    source activate $condaEnv
 fi
+# ADD COMPILATION of fmt gtest and eigen!!!
 
 printf "Provide cantera directory\n"
 read canteraDir
@@ -149,6 +170,6 @@ mv SConstruct ~SConstruct
 python $scriptsDirectory/ISAT-CK7.py
 
 printf "Compiling Cantera...\n"
-scons build
-scons install
+sudo scons build
+sudo scons install
 fi
