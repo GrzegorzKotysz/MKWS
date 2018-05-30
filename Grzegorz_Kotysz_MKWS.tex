@@ -132,8 +132,49 @@ Next, the same situation happened for gtest\footnote{https://github.com/google/g
 from src/fortran/fct.cpp:14: include/cantera/base/fmt.h:5:26: fatal error: fmt/format.h: No such file or directory
 compilation terminated.
 \end{lstlisting}
-	
-
+After manually compiling aforementioned libraries, some other errors occurred, which are not described in detail.	
+Added \footnote{https://github.com/Cantera/cantera/issues/470}
+\begin{lstlisting}
+#include "cantera/ext/fmt/printf.h"
+#include "/usr/local/include/fmt/printf.h" (if fmt was compiled locally)
+\end{lstlisting}
+to file include/cantera/base/global.h as the function sprintf was moved from format.h to printf.h header in fmt library.
+New error was encountered, also noted by other users:\footnote{https://groups.google.com/forum/#!topic/cantera-users/31rTjyavJQA}
+\begin{lstlisting}
+src/thermo/MolalityVPSSTP.cpp:414:5: error: 'MemoryWriter' is not a member of 'fmt'
+\end{lstlisting}
+Hence, line 414 was changed from:
+\begin{lstlisting}
+    fmt::MemoryWriter b;
+\end{lstlisting}
+\begin{lstlisting}
+    fmt::writer b;
+\end{lstlisting}
+because the name of function was changed between fmt v3.0.1 and fmt v5.0.0. Then, lines 512-514 also have been adjusted for new version.
+\begin{lstlisting}
+b.str()
+\end{lstlisting}
+\begin{lstlisting}
+to_string(b)
+\end{lstlisting}
+It did not work.
+\begin{lstlisting}
+L414    fmt::memory_buffer b;
+\end{lstlisting}
+Then all 
+\begin{lstlisting}
+b.write(
+\end{lstlisting} 
+instances must be changed into 
+\begin{lstlisting}
+format_to(b,
+\end{lstlisting} 
+The same changes were made to src/thermo/MolarityIonicVPSSTP.cpp, PureFluidsPhase.cpp, ThermoPhase.cpp. Similar changes (with s instead of b) were introduced to src/numerics/CVodesIntegrator.cpp file.
+New type of error was met:
+\begin{lstlisting}
+In file included from src/kinetics/Group.cpp:9:0:
+include/cantera/kinetics/Group.h:128:80: error: macro "fmt" passed 2 arguments, but takes just 1
+\end{lstlisting}
 
 Now, the ISAT-CK7 cantera fortran code must be downloaded.
 	

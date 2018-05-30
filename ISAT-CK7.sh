@@ -167,8 +167,27 @@ read canteraDir
 cd $canteraDir/
 printf "Editing SConstruct file\n"
 mv SConstruct ~SConstruct
-python $scriptsDirectory/ISAT-CK7.py
+python $scriptsDirectory/ISAT-CK7.py edit_SConstruct
+# No backups of following files as the Cantera compiler tries to compile them
+printf "Editing src/thermo/MolalityVPSSTP.cpp\n"
+cd $canteraDir/src/thermo/
+#mv MolalityVPSSTP.cpp ~MolalityVPSSTP.cpp
+python $scriptsDirectory/ISAT-CK7.py adjust_fmt MolalityVPSSTP.cpp b
+printf "Editing src/thermo/MolarityIonicVPSSTP.cpp\n"
+#mv MolarityIonicVPSSTP.cpp ~MolarityIonicVPSSTP.cpp
+python $scriptsDirectory/ISAT-CK7.py adjust_fmt MolarityIonicVPSSTP.cpp b
+printf "Editing src/thermo/PureFluidPhase.cpp\n"
+#mv PureFluidPhase.cpp ~PureFluidPhase.cpp
+python $scriptsDirectory/ISAT-CK7.py adjust_fmt PureFluidPhase.cpp b
+printf "Editing src/thermo/ThermoPhase.cpp\n"
+#mv ThermoPhase.cpp ~ThermoPhase.cpp
+python $scriptsDirectory/ISAT-CK7.py adjust_fmt ThermoPhase.cpp b
+cd $canteraDir/src/numerics/
+printf "Editing src/numerics/CVodesIntegrator.cpp\n"
+#mv CVodesIntegrator.cpp ~CVodesIntegrator.cpp
+python $scriptsDirectory/ISAT-CK7.py adjust_fmt CVodesIntegrator.cpp s
 
+cd $canteraDir/
 printf "Compiling Cantera...\n"
 sudo scons build
 sudo scons install
