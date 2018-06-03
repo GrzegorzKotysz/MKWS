@@ -8,7 +8,7 @@ if len(sys.argv) > 2 :
 if len(sys.argv) > 3 :
     var = sys.argv[3]
 
-if command == "edit_SConstruct": 
+if (command == "edit") and (name == "SConstruct") : 
     with open('~SConstruct', 'r') as file:
         # read a list of lines into data
         data = file.readlines()
@@ -30,3 +30,14 @@ if command == "adjust_fmt" :
             line = line.replace("%s.write(" %var, "format_to(%s," %var)
             line = line.replace("%s.str()" %var, "to_string(%s)" %var)
             f.writelines(line)
+            
+if (command == "edit") and (name == "global.h") :
+    with open(name, 'r') as file :
+        data = file.readlines()
+    with open(name, 'w') as f :
+        for i, line in enumerate(data, 1) :
+            if i == 24 :
+                f.writelines("#include \"/usr/local/include/fmt/printf.h\"\n")
+            f.writelines(line)
+                
+                              

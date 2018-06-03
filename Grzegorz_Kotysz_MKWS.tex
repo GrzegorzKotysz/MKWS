@@ -127,7 +127,7 @@ cmake ..
 make 
 sudo make install
 \end{lstlisting}
-Next, the same situation happened for gtest\footnote{https://github.com/google/googletest} and Eigen\footnote{https://eigen.tuxfamily.org/index.php?title=Main_Page} libraries. {{{Note: all three packages can be also installed into <cantera folder>/ext folder and Scons will resolve the issue}}}. After finishing all the above steps, the following error was discovered while running scons build:
+Next, the same situation happened for gtest\footnote{https://github.com/google/googletest} and Eigen\footnote{https://eigen.tuxfamily.org/index.php?title=Main_Page} libraries. {{{Note: all three packages can be also installed into <cantera folder>/ext folder and Scons will resolve the issue}}}. In fact, Eigen library did not work as compiled for local user. It had to be copied into cantera installation folder. After finishing all the above steps, the following error was discovered while running scons build:
 \begin{lstlisting}
 from src/fortran/fct.cpp:14: include/cantera/base/fmt.h:5:26: fatal error: fmt/format.h: No such file or directory
 compilation terminated.
