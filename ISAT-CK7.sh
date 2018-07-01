@@ -212,7 +212,7 @@ cd $canteraDir/
 # Compilation of eigen
 while :
 do
-    printf "Do you want to compile eigen library? [Y/n]\n"
+    printf "Do you want to compile eigen library on the go? [Y/n]\n"
     read compileEigen
     if [[ $compileEigen == "n" ]]
     then
@@ -234,6 +234,9 @@ python $scriptsDirectory/ISAT-CK7.py edit SConstruct
 printf "Editing include/cantera/base/global.h\n"
 cd $canteraDir/include/cantera/base/
 python $scriptsDirectory/ISAT-CK7.py edit global.h
+printf "Editing include/cantera/base/fmt.h\n"
+cd $canteraDir/include/cantera/base/
+python $scriptsDirectory/ISAT-CK7.py edit fmt.h
 printf "Editing src/thermo/MolalityVPSSTP.cpp\n"
 cd $canteraDir/src/thermo/
 python $scriptsDirectory/ISAT-CK7.py adjust_fmt MolalityVPSSTP.cpp b
@@ -249,6 +252,9 @@ python $scriptsDirectory/ISAT-CK7.py adjust_fmt CVodesIntegrator.cpp s
 
 cd $canteraDir/
 printf "Compiling Cantera...\n"
+
+#ADD DECISION WHETHER STABLE OR DEVELOPMENT
+
 sudo scons build
 sudo scons install
 fi

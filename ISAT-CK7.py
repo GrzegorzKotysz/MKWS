@@ -40,4 +40,12 @@ if (command == "edit") and (name == "global.h") :
                 f.writelines("#include \"/usr/local/include/fmt/printf.h\"\n")
             f.writelines(line)
                 
-                              
+if (command == "edit") and (name == "fmt.h") :
+    with open(name, 'r') as file:
+        data = file.readlines()
+    with open(name, 'w') as f :
+        for i, line in enumerate(data, 1):
+            if i == 4 :
+                f.writelines("#define FMT_NO_FMT_STRING_ALIAS\n")
+                f.writelines("#define FMT_HEADER_ONLY\n")
+            f.writelines(line)
