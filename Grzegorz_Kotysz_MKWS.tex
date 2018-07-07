@@ -196,8 +196,20 @@ Hence, the fmt library shall be recompiled using -fPIC flag or the solution used
 \end{lstlisting}
 It is worth to mention that although the code which can be found at cantera github was published 4 days earlier, the compatibility with new fmt library was achieved simultaneously. The main difference is the elegance of the 'professional' solution in comparison with (naokolo, objazd) presented in this paper. Hence, it is recommended using development cantera version instead of using stable cantera distribution and editing it with attached script. This led to the decision to edit scripts so the user could choose whether he is using development or stable cantera version. Finally, Cantera was successfully installed.
 
-Now, the ISAT-CK7 cantera fortran code must be downloaded.
-	
+Now, the ISAT-CK7 cantera fortran code must be downloaded.\footnote{https://github.com/nogenmyr/ISAT-CK7-Cantera [Accessed on: 07.07.2018]} Path to the Cantera source in the /ISAT/build-files/vars.mk must be changed. Next, it is advised to check whether symbolic link in /ISAT_dependencies/lib/ exists. If not, it has to be created by performing \textit{make} command in /ISAT/. The following error was encountered:
+\begin{lstlisting}
+Error: Different shape for array assignment at (1) on dimension 1 (11 and 10)
+../build-files/build-targets.mk:8: recipe for target 'isatab.o' failed
+\end{lstlisting}
 
+
+Finally, the OpenFOAM interface for ISAT-CK7. It must be downloaded from the author's GitHub\footnote{https://github.com/nogenmyr/ISATChemistrySolver [Accessed on: 07.07.2018]} and put into /OpenFOAM/user/src/. Then it is compiled by executing wmake command in /src/ISATChemistrySolver/lib/ folder. Following error was encountered:
+\begin{lstlisting}
+/home/greg/OpenFOAM/OpenFOAM-v1712/src/thermophysicalModels/basic/lnInclude/fluidThermo.H40: fatal error: compressibleTransportModel.H: No such file or directory
+compilation terminated.
+\end{lstlisting}
+Now, some symbolic links need to be created...
 
 \end{document}
+
+Fooladgar, Ehsan, C. K. Chan, and Karl-Johan Nogenmyr. "An accelerated computation of combustion with finite-rate chemistry using LES and an open source library for In-Situ-Adaptive Tabulation." Computers & Fluids 146 (2017): 42-50.

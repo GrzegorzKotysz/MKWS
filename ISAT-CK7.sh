@@ -167,94 +167,129 @@ fi
 printf "Provide cantera directory\n"
 read canteraDir
 
-# Compilation of fmt
-while :
-do
-    printf "Do you want to compile fmt 5.0.0 library? [Y/n]\n"
-    read compileFmt
-    if [[ $compileFmt == "n" ]]
-    then
-        break
-    elif [[ $compileFmt == "Y" ]]
-    then
-        printf "Provide fmt directory\n"
-        read fmtDir
-        cd $fmtDir
-        mkdir build
-        cd build
-        cmake ..
-        make
-        sudo make install
+# # Compilation of fmt
+# while :
+# do
+#     printf "Do you want to compile fmt 5.0.0 library? [Y/n]\n"
+#     read compileFmt
+#     if [[ $compileFmt == "n" ]]
+#     then
+#         break
+#     elif [[ $compileFmt == "Y" ]]
+#     then
+#         printf "Provide fmt directory\n"
+#         read fmtDir
+#         cd $fmtDir
+#         mkdir build
+#         cd build
+#         cmake ..
+#         make
+#         sudo make install
+#     fi
+# done
+# # Compilation of gtest
+# while :
+# do
+#     printf "Do you want to compile gtest library? [Y/n]\n"
+#     read compileGtest
+#     if [[ $compileGtest == "n" ]]
+#     then
+#         break
+#     elif [[ $compileGtest == "Y" ]]
+#     then
+#         printf "Provide gtest directory\n"
+#         read gtestDir
+#         cd $gtestDir
+#         mkdir build
+#         cd build
+#         cmake ..
+#         make
+#         sudo make install
+#     fi
+# done
+# 
+# cd $canteraDir/
+# # Compilation of eigen
+# while :
+# do
+#     printf "Do you want to compile eigen library on the go? [Y/n]\n"
+#     read compileEigen
+#     if [[ $compileEigen == "n" ]]
+#     then
+#         break
+#     elif [[ $compileEigen == "Y" ]]
+#     then
+#         printf "Provide eigen directory\n"
+#         read eigenDir
+#         cp -r $eigenDir/* ext/eigen/
+#         break
+#     fi
+# done
+# 
+# 
+# printf "Editing SConstruct file\n"
+# mv SConstruct ~SConstruct
+# python $scriptsDirectory/ISAT-CK7.py edit SConstruct
+# # No backups of following files as the Cantera compiler tries to compile them
+# printf "Editing include/cantera/base/global.h\n"
+# cd $canteraDir/include/cantera/base/
+# python $scriptsDirectory/ISAT-CK7.py edit global.h
+# printf "Editing include/cantera/base/fmt.h\n"
+# cd $canteraDir/include/cantera/base/
+# python $scriptsDirectory/ISAT-CK7.py edit fmt.h
+# printf "Editing src/thermo/MolalityVPSSTP.cpp\n"
+# cd $canteraDir/src/thermo/
+# python $scriptsDirectory/ISAT-CK7.py adjust_fmt MolalityVPSSTP.cpp b
+# printf "Editing src/thermo/MolarityIonicVPSSTP.cpp\n"
+# python $scriptsDirectory/ISAT-CK7.py adjust_fmt MolarityIonicVPSSTP.cpp b
+# printf "Editing src/thermo/PureFluidPhase.cpp\n"
+# python $scriptsDirectory/ISAT-CK7.py adjust_fmt PureFluidPhase.cpp b
+# printf "Editing src/thermo/ThermoPhase.cpp\n"
+# python $scriptsDirectory/ISAT-CK7.py adjust_fmt ThermoPhase.cpp b
+# cd $canteraDir/src/numerics/
+# printf "Editing src/numerics/CVodesIntegrator.cpp\n"
+# python $scriptsDirectory/ISAT-CK7.py adjust_fmt CVodesIntegrator.cpp s
+# 
+# cd $canteraDir/
+# printf "Compiling Cantera...\n"
+# 
+# #ADD DECISION WHETHER STABLE OR DEVELOPMENT
+# 
+# sudo scons build
+# sudo scons install
+
+#Building ISAT CK7 Cantera package
+printf "Provide ISAT-CK7-Cantera-Master path\n"
+read ISATDir
+cd $ISATDir/ISAT/build-files/
+printf "Editing /ISAT/build-files/vars.mk\n"
+# https://stackoverflow.com/questions/11145270/how-to-replace-an-entire-line-in-a-text-file-by-line-number#11145362
+sed -i "20s#.*#CANTERA_SRC=$canteraDir/src#" vars.mk
+
+ISATsymlink=$ISATDir/ISAT_dependencies/lib/libcantera_fortran.a
+# https://stackoverflow.com/questions/5767062/how-to-check-if-a-symlink-exists
+if [ -L $ISATsymlink ] && [ -e $ISATsymlink ] ; then
+    printf "Symbolic link to libcantera_fortran ok\n"
+else
+# https://askubuntu.com/questions/843740/how-to-create-a-symbolic-link-in-a-linux-directory
+    printf "Symbolic link to libcantera_fortran will be created\n"
+    ln -s /usr/local/lib/libcantera_fortran.a $ISATsymlink
+    if [ -L $ISATsymlink ] && [ -e $ISATsymlink ] ; then
+        printf "Symbolic link to libcantera_fortran ok\n"
+    else
+        printf "ERROR: symbolic link not created\n"
     fi
-done
-# Compilation of gtest
-while :
-do
-    printf "Do you want to compile gtest library? [Y/n]\n"
-    read compileGtest
-    if [[ $compileGtest == "n" ]]
-    then
-        break
-    elif [[ $compileGtest == "Y" ]]
-    then
-        printf "Provide gtest directory\n"
-        read gtestDir
-        cd $gtestDir
-        mkdir build
-        cd build
-        cmake ..
-        make
-        sudo make install
-    fi
-done
+fi
 
-cd $canteraDir/
-# Compilation of eigen
-while :
-do
-    printf "Do you want to compile eigen library on the go? [Y/n]\n"
-    read compileEigen
-    if [[ $compileEigen == "n" ]]
-    then
-        break
-    elif [[ $compileEigen == "Y" ]]
-    then
-        printf "Provide eigen directory\n"
-        read eigenDir
-        cp -r $eigenDir/* ext/eigen/
-        break
-    fi
-done
+printf "Building ISAT CK7 Cantera\n"
+cd $ISATDir/ISAT/
+make
 
+printf "Provide ISAT Chemistry Solver directory\n"
+read ISATChemSolverDir
+cp -r $ISATChemSolverDir $WM_PROJECT_DIR/src/ISATChemistrySolver/
+printf "Compiling OpenFOAM interface\n"
+cd $WM_PROJECT_DIR/src/ISATChemistrySolver/lib/
+wmake
 
-printf "Editing SConstruct file\n"
-mv SConstruct ~SConstruct
-python $scriptsDirectory/ISAT-CK7.py edit SConstruct
-# No backups of following files as the Cantera compiler tries to compile them
-printf "Editing include/cantera/base/global.h\n"
-cd $canteraDir/include/cantera/base/
-python $scriptsDirectory/ISAT-CK7.py edit global.h
-printf "Editing include/cantera/base/fmt.h\n"
-cd $canteraDir/include/cantera/base/
-python $scriptsDirectory/ISAT-CK7.py edit fmt.h
-printf "Editing src/thermo/MolalityVPSSTP.cpp\n"
-cd $canteraDir/src/thermo/
-python $scriptsDirectory/ISAT-CK7.py adjust_fmt MolalityVPSSTP.cpp b
-printf "Editing src/thermo/MolarityIonicVPSSTP.cpp\n"
-python $scriptsDirectory/ISAT-CK7.py adjust_fmt MolarityIonicVPSSTP.cpp b
-printf "Editing src/thermo/PureFluidPhase.cpp\n"
-python $scriptsDirectory/ISAT-CK7.py adjust_fmt PureFluidPhase.cpp b
-printf "Editing src/thermo/ThermoPhase.cpp\n"
-python $scriptsDirectory/ISAT-CK7.py adjust_fmt ThermoPhase.cpp b
-cd $canteraDir/src/numerics/
-printf "Editing src/numerics/CVodesIntegrator.cpp\n"
-python $scriptsDirectory/ISAT-CK7.py adjust_fmt CVodesIntegrator.cpp s
-
-cd $canteraDir/
-printf "Compiling Cantera...\n"
-
-#ADD DECISION WHETHER STABLE OR DEVELOPMENT
-
-sudo scons build
-sudo scons install
 fi
