@@ -201,6 +201,24 @@ Now, the ISAT-CK7 cantera fortran code must be downloaded.\footnote{https://gith
 Error: Different shape for array assignment at (1) on dimension 1 (11 and 10)
 ../build-files/build-targets.mk:8: recipe for target 'isatab.o' failed
 \end{lstlisting}
+Changed line 1946 in isatab.f90 file from ...jfe+12... into jfe+11.
+It solved that problem, but the series of errors connected with fmt library arose (arised?), most probably connected with the following information:
+\begin{lstlisting}
+/usr/include/c++/5/bits/c++0x_warning.h:32:2: error: #error This file requires compiler and library support for the ISO C++ 2011 standard. This support must be enabled with the -std=c++11 or -std=gnu++11 compiler options.
+\end{lstlisting}
+Indeed, adding \begin{lstlisting}-std=c++11 \end{lstlisting} flag into list of CPPFLAGS in vars.mk file solved the issue. It is enpugh to add it in vars.mk as all the Makefile files of ISAT library include this file. Next, compilation stopped with the following error:
+\begin{lstlisting}
+canteraaccess.cpp: In function ‘integer nasadata_(const integer*, double*)’:
+canteraaccess.cpp:41:13: error: ‘SpeciesThermo’ was not declared in this scope
+             SpeciesThermo& sp = _fph(n)->speciesThermo();
+             ^
+canteraaccess.cpp:41:28: error: ‘sp’ was not declared in this scope
+             SpeciesThermo& sp = _fph(n)->speciesThermo();
+                            ^
+../build-files/build-targets.mk:14: recipe for target 'canteraaccess.o' failed
+make[1]: *** [canteraaccess.o] Error 1
+\end{lstlisting}
+ 
 
 
 Finally, the OpenFOAM interface for ISAT-CK7. It must be downloaded from the author's GitHub\footnote{https://github.com/nogenmyr/ISATChemistrySolver [Accessed on: 07.07.2018]} and put into /OpenFOAM/user/src/. Then it is compiled by executing wmake command in /src/ISATChemistrySolver/lib/ folder. Following error was encountered:
@@ -208,7 +226,8 @@ Finally, the OpenFOAM interface for ISAT-CK7. It must be downloaded from the aut
 /home/greg/OpenFOAM/OpenFOAM-v1712/src/thermophysicalModels/basic/lnInclude/fluidThermo.H40: fatal error: compressibleTransportModel.H: No such file or directory
 compilation terminated.
 \end{lstlisting}
-Now, some symbolic links need to be created...
+File named cti2xml.py in ISATChemistrySoler must be copied into \$FOAM_USER_APPBIN.
+Now, some symbolic links need to be created.
 
 \end{document}
 

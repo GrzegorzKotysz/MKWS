@@ -258,6 +258,13 @@ read canteraDir
 # sudo scons build
 # sudo scons install
 
+printf "Checking whether fortran interface file for Cantera exists\n"
+if [ -e /usr/local/lib/libcantera_fortran.a ] ; then
+    printf "Inteface exists\n"
+else
+    printf "ERROR: interface was not created. Review installation\n"
+fi
+
 #Building ISAT CK7 Cantera package
 printf "Provide ISAT-CK7-Cantera-Master path\n"
 read ISATDir
@@ -265,31 +272,48 @@ cd $ISATDir/ISAT/build-files/
 printf "Editing /ISAT/build-files/vars.mk\n"
 # https://stackoverflow.com/questions/11145270/how-to-replace-an-entire-line-in-a-text-file-by-line-number#11145362
 sed -i "20s#.*#CANTERA_SRC=$canteraDir/src#" vars.mk
+sed -i "22s#.*#CPPFLAGS= -O3 -fPIC -std=c++11#" vars.mk
 
 ISATsymlink=$ISATDir/ISAT_dependencies/lib/libcantera_fortran.a
 # https://stackoverflow.com/questions/5767062/how-to-check-if-a-symlink-exists
-if [ -L $ISATsymlink ] && [ -e $ISATsymlink ] ; then
-    printf "Symbolic link to libcantera_fortran ok\n"
-else
-# https://askubuntu.com/questions/843740/how-to-create-a-symbolic-link-in-a-linux-directory
-    printf "Symbolic link to libcantera_fortran will be created\n"
-    ln -s /usr/local/lib/libcantera_fortran.a $ISATsymlink
-    if [ -L $ISATsymlink ] && [ -e $ISATsymlink ] ; then
-        printf "Symbolic link to libcantera_fortran ok\n"
-    else
-        printf "ERROR: symbolic link not created\n"
-    fi
-fi
+# if [ -L $ISATsymlink ] && [ -e $ISATsymlink ] ; then
+#     printf "Symbolic link to libcantera_fortran ok\n"
+# else
+# # https://askubuntu.com/questions/843740/how-to-create-a-symbolic-link-in-a-linux-directory
+#     printf "Symbolic link to libcantera_fortran will be created\n"
+#     ln -s /usr/local/lib/libcantera_fortran.a $ISATsymlink
+#     if [ -L $ISATsymlink ] && [ -e $ISATsymlink ] ; then
+#         printf "Symbolic link to libcantera_fortran ok\n"
+#     else
+#         printf "ERROR: symbolic link not created\n"
+#     fi
+# fi
 
+printf "Editing isatab.f90\n"
+cd $ISATDir/ISAT/isatab_ser/
+sed -i "1946s#jfe+12#jfe+11#" isatab.f90
+#sed -i "3s#.*#\nset(MAKE_CXX_FLAGS \"\${MAKE_CXX_FLAGS}-std=c++11\")\n#" Makefile
 printf "Building ISAT CK7 Cantera\n"
 cd $ISATDir/ISAT/
 make
 
 printf "Provide ISAT Chemistry Solver directory\n"
 read ISATChemSolverDir
-cp -r $ISATChemSolverDir $WM_PROJECT_DIR/src/ISATChemistrySolver/
-printf "Compiling OpenFOAM interface\n"
-cd $WM_PROJECT_DIR/src/ISATChemistrySolver/lib/
-wmake
+# cp -r $ISATChemSolverDir $WM_PROJECT_DIR/src/ISATChemistrySolver/
+# printf "Compiling OpenFOAM interface\n"
+# cd $WM_PROJECT_DIR/src/ISATChemistrySolver/lib/
+# wmake
+
+printf "Copying cti2xml.py\n"
+cp $ISATChemSolverDir/run/cti2xml.py $FOAM_USER_APPBIN/
+printf "Creating symlinks in $FOAM_USER_LIBBIN\n"
+# create appropriate directory if does not exist
+if ![ -e $FOAM_USER_LIBBIN ] ; then
+    mkdir $FOAM_USER_LIBBIN
+fi
+# cd $FOAM_USER_LIBBIN
+# ln -s 
+
+
 
 fi
